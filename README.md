@@ -45,7 +45,7 @@ Las relaciones criterio–objetivo y objetivo–descriptor son normativas. El de
 2. En Settings → Pages, elegir **GitHub Actions**.
 3. El workflow `.github/workflows/deploy.yml` instala, compila y publica `dist`.
 
-Vite usa `base: "./"` y la navegación usa `HashRouter`, por lo que funciona bajo rutas de proyecto y al recargar.
+Vite usa `base: "/progra-nerea/"` y la navegación usa `HashRouter`, por lo que funciona bajo la ruta pública del proyecto y al recargar.
 
 ## PDF y copias editables
 

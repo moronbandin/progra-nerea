@@ -1,0 +1,34 @@
+@page {
+  size: A4;
+  margin: 18mm 17mm 20mm 22mm;
+}
+
+@page :left {
+  margin-left: 17mm;
+  margin-right: 22mm;
+}
+
+@page :right {
+  margin-left: 22mm;
+  margin-right: 17mm;
+}
+
+@media print {
+  body { background: white; }
+  .editor-sidebar, .panel-header, .export-actions, .editor-main > section > :not(.print-preview) { display: none !important; }
+  .editor-shell, .editor-main, .editor-main > section, .print-preview { display: block; padding: 0; margin: 0; max-width: none; }
+  .print-page { width: auto; min-height: auto; padding: 0; box-shadow: none; page-break-after: always; }
+  .cover-page, .back-cover { width: 210mm; height: 297mm; margin: -18mm -17mm -20mm -22mm; padding: 24mm; }
+  .content-page { min-height: 250mm; }
+  h1, h2, h3, .print-session h2, .print-activity h3 { break-after: avoid; }
+  figure, .purpose-box, .activity-header, .short-table { break-inside: avoid; }
+  p, li { orphans: 3; widows: 3; }
+  table { width: 100%; table-layout: fixed; }
+  thead { display: table-header-group; }
+  tr { break-inside: avoid; }
+  td, th { overflow-wrap: anywhere; }
+  img { max-width: 100%; height: auto; }
+  a { overflow-wrap: anywhere; }
+  .print-activity { break-inside: auto; }
+  .no-print { display: none !important; }
+}

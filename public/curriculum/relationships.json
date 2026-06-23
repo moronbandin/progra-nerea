@@ -1,0 +1,612 @@
+[
+  {
+    "id": "rel-ce1-1",
+    "criterionId": "criterion-ce1-1",
+    "specificCompetenceId": "sc-obj1",
+    "descriptorIds": [
+      "descriptor-ccl1",
+      "descriptor-ccl5",
+      "descriptor-cp2",
+      "descriptor-cp3",
+      "descriptor-cc1",
+      "descriptor-cc2",
+      "descriptor-ccec1",
+      "descriptor-ccec3"
+    ],
+    "contentIds": [],
+    "relationType": "normative",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO",
+    "note": "La relación criterio-objetivo es explícita. Los contenidos se seleccionan manualmente porque la tabla normativa los agrupa por bloque, no por criterio individual."
+  },
+  {
+    "id": "rel-ce1-2",
+    "criterionId": "criterion-ce1-2",
+    "specificCompetenceId": "sc-obj1",
+    "descriptorIds": [
+      "descriptor-ccl1",
+      "descriptor-ccl5",
+      "descriptor-cp2",
+      "descriptor-cp3",
+      "descriptor-cc1",
+      "descriptor-cc2",
+      "descriptor-ccec1",
+      "descriptor-ccec3"
+    ],
+    "contentIds": [],
+    "relationType": "normative",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO",
+    "note": "La relación criterio-objetivo es explícita. Los contenidos se seleccionan manualmente porque la tabla normativa los agrupa por bloque, no por criterio individual."
+  },
+  {
+    "id": "rel-ce1-3",
+    "criterionId": "criterion-ce1-3",
+    "specificCompetenceId": "sc-obj10",
+    "descriptorIds": [
+      "descriptor-ccl1",
+      "descriptor-ccl5",
+      "descriptor-cp3",
+      "descriptor-cd3",
+      "descriptor-cpsaa3",
+      "descriptor-cc1",
+      "descriptor-cc2",
+      "descriptor-cc3"
+    ],
+    "contentIds": [],
+    "relationType": "normative",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO",
+    "note": "La relación criterio-objetivo es explícita. Los contenidos se seleccionan manualmente porque la tabla normativa los agrupa por bloque, no por criterio individual."
+  },
+  {
+    "id": "rel-ce1-4",
+    "criterionId": "criterion-ce1-4",
+    "specificCompetenceId": "sc-obj10",
+    "descriptorIds": [
+      "descriptor-ccl1",
+      "descriptor-ccl5",
+      "descriptor-cp3",
+      "descriptor-cd3",
+      "descriptor-cpsaa3",
+      "descriptor-cc1",
+      "descriptor-cc2",
+      "descriptor-cc3"
+    ],
+    "contentIds": [],
+    "relationType": "normative",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO",
+    "note": "La relación criterio-objetivo es explícita. Los contenidos se seleccionan manualmente porque la tabla normativa los agrupa por bloque, no por criterio individual."
+  },
+  {
+    "id": "rel-ce2-1",
+    "criterionId": "criterion-ce2-1",
+    "specificCompetenceId": "sc-obj2",
+    "descriptorIds": [
+      "descriptor-ccl2",
+      "descriptor-cp2",
+      "descriptor-stem1",
+      "descriptor-cd2",
+      "descriptor-cd3",
+      "descriptor-cpsaa4",
+      "descriptor-cc3"
+    ],
+    "contentIds": [],
+    "relationType": "normative",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO",
+    "note": "La relación criterio-objetivo es explícita. Los contenidos se seleccionan manualmente porque la tabla normativa los agrupa por bloque, no por criterio individual."
+  },
+  {
+    "id": "rel-ce2-2",
+    "criterionId": "criterion-ce2-2",
+    "specificCompetenceId": "sc-obj2",
+    "descriptorIds": [
+      "descriptor-ccl2",
+      "descriptor-cp2",
+      "descriptor-stem1",
+      "descriptor-cd2",
+      "descriptor-cd3",
+      "descriptor-cpsaa4",
+      "descriptor-cc3"
+    ],
+    "contentIds": [],
+    "relationType": "normative",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO",
+    "note": "La relación criterio-objetivo es explícita. Los contenidos se seleccionan manualmente porque la tabla normativa los agrupa por bloque, no por criterio individual."
+  },
+  {
+    "id": "rel-ce2-3",
+    "criterionId": "criterion-ce2-3",
+    "specificCompetenceId": "sc-obj4",
+    "descriptorIds": [
+      "descriptor-ccl2",
+      "descriptor-ccl3",
+      "descriptor-ccl5",
+      "descriptor-cp2",
+      "descriptor-stem4",
+      "descriptor-cd1",
+      "descriptor-cpsaa4",
+      "descriptor-cc3"
+    ],
+    "contentIds": [],
+    "relationType": "normative",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO",
+    "note": "La relación criterio-objetivo es explícita. Los contenidos se seleccionan manualmente porque la tabla normativa los agrupa por bloque, no por criterio individual."
+  },
+  {
+    "id": "rel-ce2-4",
+    "criterionId": "criterion-ce2-4",
+    "specificCompetenceId": "sc-obj4",
+    "descriptorIds": [
+      "descriptor-ccl2",
+      "descriptor-ccl3",
+      "descriptor-ccl5",
+      "descriptor-cp2",
+      "descriptor-stem4",
+      "descriptor-cd1",
+      "descriptor-cpsaa4",
+      "descriptor-cc3"
+    ],
+    "contentIds": [],
+    "relationType": "normative",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO",
+    "note": "La relación criterio-objetivo es explícita. Los contenidos se seleccionan manualmente porque la tabla normativa los agrupa por bloque, no por criterio individual."
+  },
+  {
+    "id": "rel-ce2-5",
+    "criterionId": "criterion-ce2-5",
+    "specificCompetenceId": "sc-obj6",
+    "descriptorIds": [
+      "descriptor-ccl3",
+      "descriptor-cd1",
+      "descriptor-cd2",
+      "descriptor-cd3",
+      "descriptor-cd4",
+      "descriptor-cpsaa4",
+      "descriptor-cc2",
+      "descriptor-ce3"
+    ],
+    "contentIds": [],
+    "relationType": "normative",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO",
+    "note": "La relación criterio-objetivo es explícita. Los contenidos se seleccionan manualmente porque la tabla normativa los agrupa por bloque, no por criterio individual."
+  },
+  {
+    "id": "rel-ce2-6",
+    "criterionId": "criterion-ce2-6",
+    "specificCompetenceId": "sc-obj6",
+    "descriptorIds": [
+      "descriptor-ccl3",
+      "descriptor-cd1",
+      "descriptor-cd2",
+      "descriptor-cd3",
+      "descriptor-cd4",
+      "descriptor-cpsaa4",
+      "descriptor-cc2",
+      "descriptor-ce3"
+    ],
+    "contentIds": [],
+    "relationType": "normative",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO",
+    "note": "La relación criterio-objetivo es explícita. Los contenidos se seleccionan manualmente porque la tabla normativa los agrupa por bloque, no por criterio individual."
+  },
+  {
+    "id": "rel-ce2-7",
+    "criterionId": "criterion-ce2-7",
+    "specificCompetenceId": "sc-obj9",
+    "descriptorIds": [
+      "descriptor-ccl1",
+      "descriptor-ccl2",
+      "descriptor-cp2",
+      "descriptor-stem1",
+      "descriptor-stem2",
+      "descriptor-cpsaa5"
+    ],
+    "contentIds": [],
+    "relationType": "normative",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO",
+    "note": "La relación criterio-objetivo es explícita. Los contenidos se seleccionan manualmente porque la tabla normativa los agrupa por bloque, no por criterio individual."
+  },
+  {
+    "id": "rel-ce2-8",
+    "criterionId": "criterion-ce2-8",
+    "specificCompetenceId": "sc-obj9",
+    "descriptorIds": [
+      "descriptor-ccl1",
+      "descriptor-ccl2",
+      "descriptor-cp2",
+      "descriptor-stem1",
+      "descriptor-stem2",
+      "descriptor-cpsaa5"
+    ],
+    "contentIds": [],
+    "relationType": "normative",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO",
+    "note": "La relación criterio-objetivo es explícita. Los contenidos se seleccionan manualmente porque la tabla normativa los agrupa por bloque, no por criterio individual."
+  },
+  {
+    "id": "rel-ce2-9",
+    "criterionId": "criterion-ce2-9",
+    "specificCompetenceId": "sc-obj10",
+    "descriptorIds": [
+      "descriptor-ccl1",
+      "descriptor-ccl5",
+      "descriptor-cp3",
+      "descriptor-cd3",
+      "descriptor-cpsaa3",
+      "descriptor-cc1",
+      "descriptor-cc2",
+      "descriptor-cc3"
+    ],
+    "contentIds": [],
+    "relationType": "normative",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO",
+    "note": "La relación criterio-objetivo es explícita. Los contenidos se seleccionan manualmente porque la tabla normativa los agrupa por bloque, no por criterio individual."
+  },
+  {
+    "id": "rel-ce3-1",
+    "criterionId": "criterion-ce3-1",
+    "specificCompetenceId": "sc-obj3",
+    "descriptorIds": [
+      "descriptor-ccl1",
+      "descriptor-ccl3",
+      "descriptor-ccl5",
+      "descriptor-cp2",
+      "descriptor-stem1",
+      "descriptor-cd2",
+      "descriptor-cd3",
+      "descriptor-cc2",
+      "descriptor-ce1"
+    ],
+    "contentIds": [],
+    "relationType": "normative",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO",
+    "note": "La relación criterio-objetivo es explícita. Los contenidos se seleccionan manualmente porque la tabla normativa los agrupa por bloque, no por criterio individual."
+  },
+  {
+    "id": "rel-ce3-2",
+    "criterionId": "criterion-ce3-2",
+    "specificCompetenceId": "sc-obj3",
+    "descriptorIds": [
+      "descriptor-ccl1",
+      "descriptor-ccl3",
+      "descriptor-ccl5",
+      "descriptor-cp2",
+      "descriptor-stem1",
+      "descriptor-cd2",
+      "descriptor-cd3",
+      "descriptor-cc2",
+      "descriptor-ce1"
+    ],
+    "contentIds": [],
+    "relationType": "normative",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO",
+    "note": "La relación criterio-objetivo es explícita. Los contenidos se seleccionan manualmente porque la tabla normativa los agrupa por bloque, no por criterio individual."
+  },
+  {
+    "id": "rel-ce3-3",
+    "criterionId": "criterion-ce3-3",
+    "specificCompetenceId": "sc-obj5",
+    "descriptorIds": [
+      "descriptor-ccl1",
+      "descriptor-ccl3",
+      "descriptor-ccl5",
+      "descriptor-stem1",
+      "descriptor-cd2",
+      "descriptor-cd3",
+      "descriptor-cpsaa5",
+      "descriptor-cc2"
+    ],
+    "contentIds": [],
+    "relationType": "normative",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO",
+    "note": "La relación criterio-objetivo es explícita. Los contenidos se seleccionan manualmente porque la tabla normativa los agrupa por bloque, no por criterio individual."
+  },
+  {
+    "id": "rel-ce3-4",
+    "criterionId": "criterion-ce3-4",
+    "specificCompetenceId": "sc-obj5",
+    "descriptorIds": [
+      "descriptor-ccl1",
+      "descriptor-ccl3",
+      "descriptor-ccl5",
+      "descriptor-stem1",
+      "descriptor-cd2",
+      "descriptor-cd3",
+      "descriptor-cpsaa5",
+      "descriptor-cc2"
+    ],
+    "contentIds": [],
+    "relationType": "normative",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO",
+    "note": "La relación criterio-objetivo es explícita. Los contenidos se seleccionan manualmente porque la tabla normativa los agrupa por bloque, no por criterio individual."
+  },
+  {
+    "id": "rel-ce3-5",
+    "criterionId": "criterion-ce3-5",
+    "specificCompetenceId": "sc-obj6",
+    "descriptorIds": [
+      "descriptor-ccl3",
+      "descriptor-cd1",
+      "descriptor-cd2",
+      "descriptor-cd3",
+      "descriptor-cd4",
+      "descriptor-cpsaa4",
+      "descriptor-cc2",
+      "descriptor-ce3"
+    ],
+    "contentIds": [],
+    "relationType": "normative",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO",
+    "note": "La relación criterio-objetivo es explícita. Los contenidos se seleccionan manualmente porque la tabla normativa los agrupa por bloque, no por criterio individual."
+  },
+  {
+    "id": "rel-ce3-6",
+    "criterionId": "criterion-ce3-6",
+    "specificCompetenceId": "sc-obj6",
+    "descriptorIds": [
+      "descriptor-ccl3",
+      "descriptor-cd1",
+      "descriptor-cd2",
+      "descriptor-cd3",
+      "descriptor-cd4",
+      "descriptor-cpsaa4",
+      "descriptor-cc2",
+      "descriptor-ce3"
+    ],
+    "contentIds": [],
+    "relationType": "normative",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO",
+    "note": "La relación criterio-objetivo es explícita. Los contenidos se seleccionan manualmente porque la tabla normativa los agrupa por bloque, no por criterio individual."
+  },
+  {
+    "id": "rel-ce3-7",
+    "criterionId": "criterion-ce3-7",
+    "specificCompetenceId": "sc-obj9",
+    "descriptorIds": [
+      "descriptor-ccl1",
+      "descriptor-ccl2",
+      "descriptor-cp2",
+      "descriptor-stem1",
+      "descriptor-stem2",
+      "descriptor-cpsaa5"
+    ],
+    "contentIds": [],
+    "relationType": "normative",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO",
+    "note": "La relación criterio-objetivo es explícita. Los contenidos se seleccionan manualmente porque la tabla normativa los agrupa por bloque, no por criterio individual."
+  },
+  {
+    "id": "rel-ce3-8",
+    "criterionId": "criterion-ce3-8",
+    "specificCompetenceId": "sc-obj10",
+    "descriptorIds": [
+      "descriptor-ccl1",
+      "descriptor-ccl5",
+      "descriptor-cp3",
+      "descriptor-cd3",
+      "descriptor-cpsaa3",
+      "descriptor-cc1",
+      "descriptor-cc2",
+      "descriptor-cc3"
+    ],
+    "contentIds": [],
+    "relationType": "normative",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO",
+    "note": "La relación criterio-objetivo es explícita. Los contenidos se seleccionan manualmente porque la tabla normativa los agrupa por bloque, no por criterio individual."
+  },
+  {
+    "id": "rel-ce4-1",
+    "criterionId": "criterion-ce4-1",
+    "specificCompetenceId": "sc-obj4",
+    "descriptorIds": [
+      "descriptor-ccl2",
+      "descriptor-ccl3",
+      "descriptor-ccl5",
+      "descriptor-cp2",
+      "descriptor-stem4",
+      "descriptor-cd1",
+      "descriptor-cpsaa4",
+      "descriptor-cc3"
+    ],
+    "contentIds": [],
+    "relationType": "normative",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO",
+    "note": "La relación criterio-objetivo es explícita. Los contenidos se seleccionan manualmente porque la tabla normativa los agrupa por bloque, no por criterio individual."
+  },
+  {
+    "id": "rel-ce4-2",
+    "criterionId": "criterion-ce4-2",
+    "specificCompetenceId": "sc-obj4",
+    "descriptorIds": [
+      "descriptor-ccl2",
+      "descriptor-ccl3",
+      "descriptor-ccl5",
+      "descriptor-cp2",
+      "descriptor-stem4",
+      "descriptor-cd1",
+      "descriptor-cpsaa4",
+      "descriptor-cc3"
+    ],
+    "contentIds": [],
+    "relationType": "normative",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO",
+    "note": "La relación criterio-objetivo es explícita. Los contenidos se seleccionan manualmente porque la tabla normativa los agrupa por bloque, no por criterio individual."
+  },
+  {
+    "id": "rel-ce4-3",
+    "criterionId": "criterion-ce4-3",
+    "specificCompetenceId": "sc-obj5",
+    "descriptorIds": [
+      "descriptor-ccl1",
+      "descriptor-ccl3",
+      "descriptor-ccl5",
+      "descriptor-stem1",
+      "descriptor-cd2",
+      "descriptor-cd3",
+      "descriptor-cpsaa5",
+      "descriptor-cc2"
+    ],
+    "contentIds": [],
+    "relationType": "normative",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO",
+    "note": "La relación criterio-objetivo es explícita. Los contenidos se seleccionan manualmente porque la tabla normativa los agrupa por bloque, no por criterio individual."
+  },
+  {
+    "id": "rel-ce4-4",
+    "criterionId": "criterion-ce4-4",
+    "specificCompetenceId": "sc-obj7",
+    "descriptorIds": [
+      "descriptor-ccl1",
+      "descriptor-ccl4",
+      "descriptor-cd3",
+      "descriptor-cpsaa1",
+      "descriptor-ccec1",
+      "descriptor-ccec2",
+      "descriptor-ccec3"
+    ],
+    "contentIds": [],
+    "relationType": "normative",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO",
+    "note": "La relación criterio-objetivo es explícita. Los contenidos se seleccionan manualmente porque la tabla normativa los agrupa por bloque, no por criterio individual."
+  },
+  {
+    "id": "rel-ce4-5",
+    "criterionId": "criterion-ce4-5",
+    "specificCompetenceId": "sc-obj7",
+    "descriptorIds": [
+      "descriptor-ccl1",
+      "descriptor-ccl4",
+      "descriptor-cd3",
+      "descriptor-cpsaa1",
+      "descriptor-ccec1",
+      "descriptor-ccec2",
+      "descriptor-ccec3"
+    ],
+    "contentIds": [],
+    "relationType": "normative",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO",
+    "note": "La relación criterio-objetivo es explícita. Los contenidos se seleccionan manualmente porque la tabla normativa los agrupa por bloque, no por criterio individual."
+  },
+  {
+    "id": "rel-ce4-6",
+    "criterionId": "criterion-ce4-6",
+    "specificCompetenceId": "sc-obj8",
+    "descriptorIds": [
+      "descriptor-ccl1",
+      "descriptor-ccl4",
+      "descriptor-cc1",
+      "descriptor-ccec1",
+      "descriptor-ccec2",
+      "descriptor-ccec3",
+      "descriptor-ccec4"
+    ],
+    "contentIds": [],
+    "relationType": "normative",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO",
+    "note": "La relación criterio-objetivo es explícita. Los contenidos se seleccionan manualmente porque la tabla normativa los agrupa por bloque, no por criterio individual."
+  },
+  {
+    "id": "rel-ce4-7",
+    "criterionId": "criterion-ce4-7",
+    "specificCompetenceId": "sc-obj8",
+    "descriptorIds": [
+      "descriptor-ccl1",
+      "descriptor-ccl4",
+      "descriptor-cc1",
+      "descriptor-ccec1",
+      "descriptor-ccec2",
+      "descriptor-ccec3",
+      "descriptor-ccec4"
+    ],
+    "contentIds": [],
+    "relationType": "normative",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO",
+    "note": "La relación criterio-objetivo es explícita. Los contenidos se seleccionan manualmente porque la tabla normativa los agrupa por bloque, no por criterio individual."
+  },
+  {
+    "id": "rel-ce4-8",
+    "criterionId": "criterion-ce4-8",
+    "specificCompetenceId": "sc-obj8",
+    "descriptorIds": [
+      "descriptor-ccl1",
+      "descriptor-ccl4",
+      "descriptor-cc1",
+      "descriptor-ccec1",
+      "descriptor-ccec2",
+      "descriptor-ccec3",
+      "descriptor-ccec4"
+    ],
+    "contentIds": [],
+    "relationType": "normative",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO",
+    "note": "La relación criterio-objetivo es explícita. Los contenidos se seleccionan manualmente porque la tabla normativa los agrupa por bloque, no por criterio individual."
+  },
+  {
+    "id": "rel-ce5-1",
+    "criterionId": "criterion-ce5-1",
+    "specificCompetenceId": "sc-obj5",
+    "descriptorIds": [
+      "descriptor-ccl1",
+      "descriptor-ccl3",
+      "descriptor-ccl5",
+      "descriptor-stem1",
+      "descriptor-cd2",
+      "descriptor-cd3",
+      "descriptor-cpsaa5",
+      "descriptor-cc2"
+    ],
+    "contentIds": [],
+    "relationType": "normative",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO",
+    "note": "La relación criterio-objetivo es explícita. Los contenidos se seleccionan manualmente porque la tabla normativa los agrupa por bloque, no por criterio individual."
+  },
+  {
+    "id": "rel-ce5-2",
+    "criterionId": "criterion-ce5-2",
+    "specificCompetenceId": "sc-obj9",
+    "descriptorIds": [
+      "descriptor-ccl1",
+      "descriptor-ccl2",
+      "descriptor-cp2",
+      "descriptor-stem1",
+      "descriptor-stem2",
+      "descriptor-cpsaa5"
+    ],
+    "contentIds": [],
+    "relationType": "normative",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO",
+    "note": "La relación criterio-objetivo es explícita. Los contenidos se seleccionan manualmente porque la tabla normativa los agrupa por bloque, no por criterio individual."
+  },
+  {
+    "id": "rel-ce5-3",
+    "criterionId": "criterion-ce5-3",
+    "specificCompetenceId": "sc-obj9",
+    "descriptorIds": [
+      "descriptor-ccl1",
+      "descriptor-ccl2",
+      "descriptor-cp2",
+      "descriptor-stem1",
+      "descriptor-stem2",
+      "descriptor-cpsaa5"
+    ],
+    "contentIds": [],
+    "relationType": "normative",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO",
+    "note": "La relación criterio-objetivo es explícita. Los contenidos se seleccionan manualmente porque la tabla normativa los agrupa por bloque, no por criterio individual."
+  },
+  {
+    "id": "rel-ce5-4",
+    "criterionId": "criterion-ce5-4",
+    "specificCompetenceId": "sc-obj9",
+    "descriptorIds": [
+      "descriptor-ccl1",
+      "descriptor-ccl2",
+      "descriptor-cp2",
+      "descriptor-stem1",
+      "descriptor-stem2",
+      "descriptor-cpsaa5"
+    ],
+    "contentIds": [],
+    "relationType": "normative",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO",
+    "note": "La relación criterio-objetivo es explícita. Los contenidos se seleccionan manualmente porque la tabla normativa los agrupa por bloque, no por criterio individual."
+  }
+]

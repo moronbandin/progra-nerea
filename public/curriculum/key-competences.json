@@ -1,0 +1,58 @@
+[
+  {
+    "id": "key-ccl",
+    "code": "CCL",
+    "legalText": "Competencia en comunicación lingüística",
+    "shortLabel": "Competencia en comunicación lingüística",
+    "sourceReference": "Decreto 156/2022, anexo I"
+  },
+  {
+    "id": "key-cp",
+    "code": "CP",
+    "legalText": "Competencia plurilingüe",
+    "shortLabel": "Competencia plurilingüe",
+    "sourceReference": "Decreto 156/2022, anexo I"
+  },
+  {
+    "id": "key-stem",
+    "code": "STEM",
+    "legalText": "Competencia matemática y competencia en ciencia, tecnología e ingeniería",
+    "shortLabel": "Competencia matemática y competencia en ciencia, tecnología e ingeniería",
+    "sourceReference": "Decreto 156/2022, anexo I"
+  },
+  {
+    "id": "key-cd",
+    "code": "CD",
+    "legalText": "Competencia digital",
+    "shortLabel": "Competencia digital",
+    "sourceReference": "Decreto 156/2022, anexo I"
+  },
+  {
+    "id": "key-cpsaa",
+    "code": "CPSAA",
+    "legalText": "Competencia personal, social y de aprender a aprender",
+    "shortLabel": "Competencia personal, social y de aprender a aprender",
+    "sourceReference": "Decreto 156/2022, anexo I"
+  },
+  {
+    "id": "key-cc",
+    "code": "CC",
+    "legalText": "Competencia ciudadana",
+    "shortLabel": "Competencia ciudadana",
+    "sourceReference": "Decreto 156/2022, anexo I"
+  },
+  {
+    "id": "key-ce",
+    "code": "CE",
+    "legalText": "Competencia emprendedora",
+    "shortLabel": "Competencia emprendedora",
+    "sourceReference": "Decreto 156/2022, anexo I"
+  },
+  {
+    "id": "key-ccec",
+    "code": "CCEC",
+    "legalText": "Competencia en conciencia y expresión culturales",
+    "shortLabel": "Competencia en conciencia y expresión culturales",
+    "sourceReference": "Decreto 156/2022, anexo I"
+  }
+]

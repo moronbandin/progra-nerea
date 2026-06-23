@@ -1,0 +1,37 @@
+[
+  {
+    "id": "block-1",
+    "code": "B1",
+    "legalText": "Las lenguas y sus hablantes",
+    "shortLabel": "Las lenguas y sus hablantes",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO"
+  },
+  {
+    "id": "block-2",
+    "code": "B2",
+    "legalText": "Comunicación: comprensión oral y escritura",
+    "shortLabel": "Comunicación: comprensión oral y escritura",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO"
+  },
+  {
+    "id": "block-3",
+    "code": "B3",
+    "legalText": "Comunicación: expresión oral y escritura",
+    "shortLabel": "Comunicación: expresión oral y escritura",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO"
+  },
+  {
+    "id": "block-4",
+    "code": "B4",
+    "legalText": "Educación literaria",
+    "shortLabel": "Educación literaria",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO"
+  },
+  {
+    "id": "block-5",
+    "code": "B5",
+    "legalText": "Reflexión sobre la lengua",
+    "shortLabel": "Reflexión sobre la lengua",
+    "sourceReference": "Decreto 156/2022, anexo II, materia 14, 4.º ESO"
+  }
+]

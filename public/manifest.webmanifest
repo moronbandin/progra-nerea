@@ -1,0 +1,10 @@
+{
+  "name": "Cuaderno de unidades · Lengua 4.º ESO",
+  "short_name": "Unidades LCL",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f4f0e7",
+  "theme_color": "#243428",
+  "lang": "es",
+  "icons": []
+}

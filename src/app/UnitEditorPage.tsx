@@ -362,12 +362,13 @@ function ReviewPanel({ unit, sections, sessions, activities }: { unit: Unit; sec
 function ExportPanel({ unit, sections, sessions, activities }: { unit: Unit; sections: UnitSection[]; sessions: Session[]; activities: Activity[] }) {
   const [paged, setPaged] = useState(false);
   return <section>
-    <PanelHeader eyebrow="DIN A4 · CSS Paged Media" title="Vista previa y PDF" text="Esta es la vista que Nerea puede revisar. Para obtener el archivo PDF, usa «Guardar como PDF» en Chrome o Chromium y activa los gráficos de fondo." />
+    <PanelHeader eyebrow="DIN A4 · CSS Paged Media" title="Vista previa y PDF" text="Documento A4 a tamaño físico real. Para obtener el PDF final usa Chrome o Chromium, escala 100 %, orientación vertical y gráficos de fondo activados." />
     <aside className="format-guide export-guide">
       <div><strong>PDF</strong><span>Documento final para leer, compartir, imprimir o enviar al tribunal.</span></div>
       <div><strong>.udpack</strong><span>Copia editable. No se abre con Word o Preview: se restaura desde la pantalla de inicio de esta aplicación.</span></div>
     </aside>
-    <div className="export-actions"><button className="button button--primary" onClick={() => window.print()}>Guardar como PDF</button><button className="button" onClick={() => setPaged((value) => !value)}>{paged ? "Ocultar paginado" : "Ver paginado final"}</button><button className="button" onClick={() => exportUnitPackage(unit)}>Guardar copia editable (.udpack)</button></div>
+    <div className="print-settings no-print"><strong>Ajustes de impresión</strong><span>A4 · Vertical · Escala 100 % · Márgenes predeterminados · Gráficos de fondo activados · Encabezados del navegador desactivados</span></div>
+    <div className="export-actions"><button className="button button--primary" onClick={() => window.print()}>Guardar PDF A4</button><button className="button" onClick={() => setPaged((value) => !value)}>{paged ? "Ocultar paginado" : "Ver paginado final"}</button><button className="button" onClick={() => exportUnitPackage(unit)}>Guardar copia editable (.udpack)</button></div>
     <PrintDocument unit={unit} sections={sections} sessions={sessions} activities={activities} />
     {paged && <PagedPreview />}
   </section>;

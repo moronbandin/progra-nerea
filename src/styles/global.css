@@ -133,6 +133,8 @@ h1 { letter-spacing: -.035em; }
 .table-wrap { overflow-x: auto; background: white; border: 1px solid var(--line); }
 .print-table small { display: block; margin-top: 5px; color: #5f665f; font-size: 9px; line-height: 1.35; }
 .export-guide { margin: 0 0 22px; }
+.print-settings { display: flex; gap: 14px; align-items: baseline; margin: 0 0 18px; padding: 13px 16px; border-left: 4px solid var(--unit-color); background: #f7f3e9; color: var(--muted); font-size: 13px; line-height: 1.45; }
+.print-settings strong { flex: 0 0 auto; color: var(--ink); }
 table { border-collapse: collapse; width: 100%; }
 th, td { text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); padding: 11px; }
 th { background: #293a2d; color: white; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }

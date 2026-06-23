@@ -1,34 +1,202 @@
+/*
+ * Geometría editorial de impresión.
+ *
+ * Todas las páginas usan un lienzo A4 sin margen impuesto por el navegador.
+ * La caja interior de las páginas de contenido incorpora sus márgenes físicos
+ * como padding. Así las cubiertas llegan al borde y Chromium puede mantener
+ * 100 % de escala sin aplicar una reducción automática.
+ */
 @page {
-  size: A4;
-  margin: 18mm 17mm 20mm 22mm;
-}
-
-@page :left {
-  margin-left: 17mm;
-  margin-right: 22mm;
-}
-
-@page :right {
-  margin-left: 22mm;
-  margin-right: 17mm;
+  size: A4 portrait;
+  margin: 0;
 }
 
 @media print {
-  body { background: white; }
-  .editor-sidebar, .panel-header, .export-actions, .editor-main > section > :not(.print-preview) { display: none !important; }
-  .editor-shell, .editor-main, .editor-main > section, .print-preview { display: block; padding: 0; margin: 0; max-width: none; }
-  .print-page { width: auto; min-height: auto; padding: 0; box-shadow: none; page-break-after: always; }
-  .cover-page, .back-cover { width: 210mm; height: 297mm; margin: -18mm -17mm -20mm -22mm; padding: 24mm; }
-  .content-page { min-height: 250mm; }
-  h1, h2, h3, .print-session h2, .print-activity h3 { break-after: avoid; }
-  figure, .purpose-box, .activity-header, .short-table { break-inside: avoid; }
-  p, li { orphans: 3; widows: 3; }
-  table { width: 100%; table-layout: fixed; }
-  thead { display: table-header-group; }
-  tr { break-inside: avoid; }
-  td, th { overflow-wrap: anywhere; }
-  img { max-width: 100%; height: auto; }
-  a { overflow-wrap: anywhere; }
-  .print-activity { break-inside: auto; }
-  .no-print { display: none !important; }
+  html,
+  body {
+    width: 210mm;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+  }
+
+  body {
+    color: #171a17;
+    font-size: 10.5pt;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .editor-sidebar,
+  .panel-header,
+  .export-actions,
+  .export-guide,
+  .editor-main > section > :not(.print-preview) {
+    display: none !important;
+  }
+
+  .editor-shell,
+  .editor-main,
+  .editor-main > section,
+  .print-preview {
+    display: block !important;
+    width: auto !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+  }
+
+  .print-preview {
+    gap: 0 !important;
+  }
+
+  .print-page {
+    box-sizing: border-box !important;
+    width: 210mm !important;
+    min-width: 0 !important;
+    min-height: 297mm !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    background: #fff;
+    box-shadow: none !important;
+    break-after: page;
+  }
+
+  .cover-page,
+  .back-cover {
+    box-sizing: border-box !important;
+    width: 210mm !important;
+    height: 297mm !important;
+    min-height: 297mm !important;
+    max-height: 297mm !important;
+    padding: 24mm !important;
+    overflow: hidden !important;
+    color: #fff !important;
+    background: var(--unit-color) !important;
+  }
+
+  .content-page {
+    box-sizing: border-box !important;
+    width: 210mm !important;
+    min-height: 297mm !important;
+    padding: 18mm 17mm 20mm 22mm !important;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+
+  .content-page:last-of-type,
+  .back-cover {
+    break-after: auto;
+  }
+
+  .cover-page h1 {
+    width: auto !important;
+    max-width: 160mm !important;
+    font-size: 44pt !important;
+    line-height: 0.96 !important;
+    overflow-wrap: anywhere;
+  }
+
+  .back-cover h1 {
+    font-size: 34pt !important;
+    line-height: 1 !important;
+    overflow-wrap: anywhere;
+  }
+
+  .running-header {
+    margin-bottom: 9mm;
+  }
+
+  .content-page > h1 {
+    margin: 0 0 8mm;
+    font-size: 23pt;
+    line-height: 1.08;
+  }
+
+  .prose {
+    font-size: 10.5pt;
+    line-height: 1.48;
+  }
+
+  h1,
+  h2,
+  h3,
+  .print-session h2,
+  .print-activity h3 {
+    break-after: avoid-page;
+  }
+
+  figure,
+  figcaption,
+  .purpose-box,
+  .activity-header,
+  .short-table,
+  .qr-image {
+    break-inside: avoid-page;
+  }
+
+  p,
+  li {
+    orphans: 3;
+    widows: 3;
+  }
+
+  table {
+    width: 100% !important;
+    max-width: 100% !important;
+    table-layout: fixed;
+    font-size: 8.7pt;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tr {
+    break-inside: avoid-page;
+  }
+
+  th,
+  td {
+    padding: 2.2mm !important;
+    overflow-wrap: anywhere;
+    word-break: normal;
+  }
+
+  .table-wrap {
+    width: 100%;
+    max-width: 100%;
+    overflow: visible !important;
+    border: 0;
+  }
+
+  img {
+    max-width: 100% !important;
+    height: auto;
+    object-fit: contain;
+    image-rendering: auto;
+  }
+
+  .cover-image {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+  }
+
+  .print-session,
+  .print-activity {
+    break-inside: auto;
+  }
+
+  .no-print {
+    display: none !important;
+  }
 }

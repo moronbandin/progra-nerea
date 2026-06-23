@@ -130,6 +130,8 @@
 
   figure,
   figcaption,
+  .activity-media,
+  .video-thumbnail,
   .purpose-box,
   .activity-header,
   .short-table,
@@ -177,6 +179,66 @@
     height: auto;
     object-fit: contain;
     image-rendering: auto;
+  }
+
+  video,
+  iframe,
+  object,
+  embed {
+    display: block !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: 225mm !important;
+    aspect-ratio: 16 / 9;
+    overflow: hidden !important;
+  }
+
+  .student-material,
+  .student-material > *,
+  .activity-media,
+  .activity-media * {
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .student-material img,
+  .activity-media img {
+    width: auto !important;
+    max-width: 100% !important;
+    max-height: 225mm !important;
+    margin-inline: auto;
+  }
+
+  .activity-media {
+    width: 100% !important;
+    margin: 4mm 0 0 !important;
+    overflow: hidden !important;
+  }
+
+  .activity-media--image,
+  .activity-media--video {
+    break-inside: avoid-page;
+  }
+
+  .video-thumbnail {
+    width: 100% !important;
+    max-height: 110mm !important;
+    aspect-ratio: 16 / 9;
+  }
+
+  .video-thumbnail img {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 110mm !important;
+    object-fit: contain !important;
+  }
+
+  .activity-media--file {
+    break-inside: avoid-page;
+    overflow-wrap: anywhere;
   }
 
   .cover-image {

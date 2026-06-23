@@ -3,6 +3,7 @@ import {
   sectionKeys,
   sectionTitles,
   type Activity,
+  type Asset,
   type Project,
   type Session,
   type Unit,
@@ -19,6 +20,8 @@ import descriptors from "../../data/curriculum/descriptors.json";
 import keyCompetences from "../../data/curriculum/key-competences.json";
 import relationships from "../../data/curriculum/relationships.json";
 import type { CurriculumItem, CurriculumRelationship, SectionKey } from "../../schemas/domain";
+import { filterContentIdsByCriteria } from "../curriculum/curriculumRules";
+import { stageObjectivesIntro, unitObjectivesIntro } from "./templateCopy";
 
 const schemaVersion = 1;
 
@@ -89,8 +92,8 @@ async function sectionTemplate(key: SectionKey, unit: Unit): Promise<string> {
   const templates: Record<SectionKey, string> = {
     introduction: `<p>En las siguientes páginas se desarrollan los contenidos, actividades y criterios de evaluación de la Unidad Didáctica ${unit.number}, ${name}, correspondiente a ${unit.evaluation} de 4.º de Educación Secundaria Obligatoria.</p><p>La unidad se articula alrededor de ${unit.thematicAxis || "un eje temático común"} y adopta un enfoque competencial, activo e inclusivo.</p>`,
     justification: `<p>La presente unidad didáctica se ajusta a la Ley Orgánica 3/2020 (LOMLOE) y al Decreto 156/2022, que regula el currículo de la Educación Secundaria Obligatoria en Galicia.</p><p>Su selección curricular comprende ${derived.criteria.length} criterios de evaluación, ${derived.contents.length} contenidos y ${derived.competences.length} objetivos de materia. Se aplicarán medidas basadas en el Diseño Universal para el Aprendizaje (DUA) para atender a la diversidad de ritmos, intereses y necesidades.</p>`,
-    stageObjectives: `<p>La unidad contribuye al desarrollo de los siguientes objetivos de etapa:</p>${legalList(derived.stageObjectives)}`,
-    unitObjectives: `<p>Los objetivos didácticos se formulan a partir de los criterios de evaluación seleccionados:</p>${legalList(derived.criteria)}<p><strong>Objetivos de materia relacionados</strong></p>${legalList(derived.competences)}`,
+    stageObjectives: `<p>${stageObjectivesIntro}</p>${legalList(derived.stageObjectives)}`,
+    unitObjectives: `<p>${unitObjectivesIntro}</p>${legalList(derived.criteria)}<p><strong>Objetivos de materia relacionados</strong></p>${legalList(derived.competences)}`,
     contents: groupedContents.length ? groupedContents.map(({ block, items }) => `<h3>${escapeHtml(block.code)}. ${escapeHtml(block.legalText)}</h3>${legalList(items)}`).join("") : "<p><em>Aún no hay contenidos seleccionados.</em></p>",
     keyCompetences: `<p>Las relaciones normativas criterio → objetivo de materia → descriptor permiten derivar las siguientes competencias clave:</p>${legalList(derived.keyCompetences)}<p><strong>Descriptores operativos</strong></p>${legalList(derived.descriptors)}`,
     readingPlan: `<p>El Plan de Lectura se integra mediante textos literarios, divulgativos y multimodales relacionados con ${unit.thematicAxis || "el eje de la unidad"}.</p><p>Los textos principales previstos son: ${escapeHtml(unit.mainTexts || "por determinar")}.</p>`,
@@ -135,6 +138,7 @@ export async function ensureDefaultProject(): Promise<Project> {
 
 export async function createUnit(projectId: string, seed?: Partial<Unit>): Promise<Unit> {
   const timestamp = now();
+  const selectedCriterionIds = seed?.selectedCriterionIds ?? [];
   const unit: Unit = {
     id: uuid(),
     projectId,
@@ -156,8 +160,8 @@ export async function createUnit(projectId: string, seed?: Partial<Unit>): Promi
     status: seed?.status ?? "draft",
     selectedStageObjectiveIds: seed?.selectedStageObjectiveIds ?? [],
     selectedCompetenceIds: seed?.selectedCompetenceIds ?? [],
-    selectedCriterionIds: seed?.selectedCriterionIds ?? [],
-    selectedContentIds: seed?.selectedContentIds ?? [],
+    selectedCriterionIds,
+    selectedContentIds: filterContentIdsByCriteria(seed?.selectedContentIds ?? [], selectedCriterionIds),
     unitDiversityMeasures: seed?.unitDiversityMeasures ?? [],
     backCoverSummary: seed?.backCoverSummary ?? "",
     qrUrl: seed?.qrUrl ?? "",
@@ -216,7 +220,31 @@ export async function createUnit(projectId: string, seed?: Partial<Unit>): Promi
 
 export async function updateUnit(id: string, changes: Partial<Unit>): Promise<void> {
   await trackedSave(async () => {
-    await db.units.update(id, { ...changes, updatedAt: now() });
+    const current = await db.units.get(id);
+    const criterionIds = changes.selectedCriterionIds ?? current?.selectedCriterionIds ?? [];
+    const contentIds = changes.selectedContentIds ?? current?.selectedContentIds ?? [];
+    const curriculumChanges = changes.selectedCriterionIds || changes.selectedContentIds
+      ? { selectedContentIds: filterContentIdsByCriteria(contentIds, criterionIds) }
+      : {};
+    await db.units.update(id, { ...changes, ...curriculumChanges, updatedAt: now() });
+    if (changes.selectedCriterionIds || changes.selectedContentIds) {
+      const allowedCriterionIds = new Set(criterionIds);
+      const allowedContentIds = new Set(curriculumChanges.selectedContentIds ?? contentIds);
+      const sessions = await db.sessions.where("unitId").equals(id).toArray();
+      const activities = (await Promise.all(sessions.map((session) => db.activities.where("sessionId").equals(session.id).toArray()))).flat();
+      await db.sessions.bulkPut(sessions.map((session) => ({
+        ...session,
+        criterionIds: session.criterionIds.filter((criterionId) => allowedCriterionIds.has(criterionId)),
+        contentIds: session.contentIds.filter((contentId) => allowedContentIds.has(contentId)),
+        updatedAt: now()
+      })));
+      await db.activities.bulkPut(activities.map((activity) => ({
+        ...activity,
+        criterionIds: activity.criterionIds.filter((criterionId) => allowedCriterionIds.has(criterionId)),
+        contentIds: activity.contentIds.filter((contentId) => allowedContentIds.has(contentId)),
+        updatedAt: now()
+      })));
+    }
     if (changes.sessionDuration) {
       const sessions = await db.sessions.where("unitId").equals(id).toArray();
       await db.sessions.bulkPut(sessions.map((session) => ({ ...session, duration: changes.sessionDuration!, updatedAt: now() })));
@@ -302,7 +330,7 @@ export async function addActivity(sessionId: string): Promise<Activity> {
     purpose: "", description: "", instructions: "", content: "<p>Escribe aquí el material para el alumnado.</p>",
     grouping: "Individual", methodology: "", cognitiveProcess: "comprender", didacticFunction: "adquisición",
     resources: "", evidence: "", criterionIds: [], contentIds: [], duaMeasures: [], teacherNotes: "",
-    includeInExport: true, createdAt: timestamp, updatedAt: timestamp, schemaVersion
+    media: [], includeInExport: true, createdAt: timestamp, updatedAt: timestamp, schemaVersion
   };
   await db.activities.add(activity);
   const session = await db.sessions.get(sessionId);
@@ -344,10 +372,22 @@ export async function duplicateUnit(source: Unit): Promise<Unit> {
     return { ...session, id, unitId: copy.id, createdAt: timestamp, updatedAt: timestamp };
   });
   const sourceActivities = (await Promise.all(sourceSessions.map((session) => db.activities.where("sessionId").equals(session.id).sortBy("order")))).flat();
+  const sourceAssets = await db.assets.where("unitId").equals(source.id).toArray();
+  const assetMap = new Map<string, string>();
+  const assetCopies: Asset[] = sourceAssets.map((asset) => {
+    const id = uuid();
+    assetMap.set(asset.id, id);
+    return { ...asset, id, unitId: copy.id, createdAt: timestamp, updatedAt: timestamp };
+  });
   const activityCopies = sourceActivities.map((activity) => ({
     ...activity,
     id: uuid(),
     sessionId: sessionMap.get(activity.sessionId)!,
+    media: (activity.media ?? []).map((media) => ({
+      ...media,
+      assetId: media.assetId ? assetMap.get(media.assetId) : undefined,
+      thumbnailAssetId: media.thumbnailAssetId ? assetMap.get(media.thumbnailAssetId) : undefined
+    })),
     createdAt: timestamp,
     updatedAt: timestamp
   }));
@@ -355,10 +395,15 @@ export async function duplicateUnit(source: Unit): Promise<Unit> {
     const original = sourceSections.find((item) => item.key === section.key);
     return original ? updateSection(section.id, { ...original, id: section.id, unitId: copy.id }) : Promise.resolve();
   }));
-  await db.transaction("rw", db.sessions, db.activities, async () => {
+  await db.transaction("rw", db.units, db.sessions, db.activities, db.assets, async () => {
     await db.sessions.bulkDelete(defaultSessions.map((session) => session.id));
     await db.sessions.bulkAdd(sessionCopies);
     await db.activities.bulkAdd(activityCopies);
+    if (assetCopies.length) await db.assets.bulkAdd(assetCopies);
+    await db.units.update(copy.id, {
+      coverAssetId: source.coverAssetId ? assetMap.get(source.coverAssetId) : undefined,
+      updatedAt: timestamp
+    });
   });
   await refreshGeneratedSections(copy.id);
   return copy;

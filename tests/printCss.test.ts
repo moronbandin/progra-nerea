@@ -25,4 +25,11 @@ describe("geometría PDF A4", () => {
     expect(css).toContain("-webkit-print-color-adjust: exact");
     expect(css).toContain("background: var(--unit-color) !important");
   });
+
+  it("mantiene imágenes, vídeos y adjuntos dentro del ancho imprimible", () => {
+    expect(css).toMatch(/video,[\s\S]*?max-width:\s*100%\s*!important/);
+    expect(css).toContain(".student-material img");
+    expect(css).toContain(".video-thumbnail");
+    expect(css).toContain("max-height: 225mm !important");
+  });
 });

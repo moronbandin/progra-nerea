@@ -36,4 +36,28 @@ describe("sincronización de la unidad", () => {
     await updateUnit(unit.id, { title: "Otro título" });
     expect((await db.unitSections.get(introduction!.id))?.content).toBe("<p>Texto de Nerea</p>");
   });
+
+  it("solo conserva contenidos de bloques con criterios seleccionados", async () => {
+    const unit = await createUnit(projectId, {
+      selectedCriterionIds: ["criterion-ce1-1"],
+      selectedContentIds: ["content-b1-1", "content-b3-1"]
+    });
+    expect(unit.selectedContentIds).toEqual(["content-b1-1"]);
+
+    await updateUnit(unit.id, {
+      selectedCriterionIds: ["criterion-ce3-3"],
+      selectedContentIds: ["content-b1-1", "content-b3-1"]
+    });
+    expect((await db.units.get(unit.id))?.selectedContentIds).toEqual(["content-b3-1"]);
+  });
+
+  it("incluye las introducciones legales en los objetivos generados", async () => {
+    const unit = await createUnit(projectId, {
+      selectedStageObjectiveIds: ["stage-a"],
+      selectedCriterionIds: ["criterion-ce1-1"]
+    });
+    const sections = await db.unitSections.where("unitId").equals(unit.id).toArray();
+    expect(sections.find((section) => section.key === "stageObjectives")?.content).toContain("Decreto 156/2022, de 15 de septiembre");
+    expect(sections.find((section) => section.key === "unitObjectives")?.content).toContain("Al margen de los objetivos generales de etapa");
+  });
 });

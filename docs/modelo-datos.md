@@ -22,3 +22,7 @@ Los apartados guardan `generated`, `sourceTemplate`, `manuallyEdited` y `locked`
 `generated=true` y `manuallyEdited=false` activa la sincronización automática. Una edición manual suspende la sobrescritura hasta que la usuaria devuelve el apartado a modo automático.
 
 Los paquetes `.udpack` incluyen `manifest.json`, `unit.json`, `assets/` y `preview.png`. La importación valida versión y crea una copia con UUID nuevos.
+
+Las actividades guardan una colección embebida `media`. Cada elemento identifica su tipo (`image`, `video`, `file` o `link`) y referencia mediante UUID el Blob principal y, en su caso, el Blob de miniatura. Los paquetes remapean esas referencias al importar para evitar colisiones.
+
+La versión 2 de la base de datos migra las actividades existentes añadiendo `media: []`, sin borrar ni recrear las unidades ya guardadas.

@@ -67,6 +67,22 @@ export class PrograDatabase extends Dexie {
       versions: "id, unitId, createdAt",
       settings: "id, updatedAt"
     });
+    this.version(2).stores({
+      projects: "id, updatedAt",
+      units: "id, projectId, updatedAt, number",
+      unitSections: "id, unitId, [unitId+key], updatedAt",
+      sessions: "id, unitId, [unitId+order], updatedAt",
+      activities: "id, sessionId, [sessionId+order], updatedAt",
+      assets: "id, unitId, updatedAt",
+      curriculumRelations: "id, unitId, criterionId, updatedAt",
+      assessmentInstruments: "id, projectId, type, updatedAt",
+      versions: "id, unitId, createdAt",
+      settings: "id, updatedAt"
+    }).upgrade(async (transaction) => {
+      await transaction.table<Activity>("activities").toCollection().modify((activity) => {
+        if (!Array.isArray(activity.media)) activity.media = [];
+      });
+    });
   }
 }
 

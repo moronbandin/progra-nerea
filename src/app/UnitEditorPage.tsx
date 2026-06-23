@@ -5,7 +5,7 @@ import { DndContext, closestCenter, type DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy, useSortable, arrayMove } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { db } from "../db/database";
-import type { Activity, CurriculumItem, CurriculumRelationship, Session, Unit, UnitSection } from "../schemas/domain";
+import type { Activity, ActivityMedia, CurriculumItem, CurriculumRelationship, Session, Unit, UnitSection } from "../schemas/domain";
 import { sectionTitles } from "../schemas/domain";
 import {
   addActivity, addSession, duplicateSession, removeActivity, removeSession, reorderActivities, reorderSessions,
@@ -13,7 +13,10 @@ import {
 } from "../features/units/unitService";
 import { RichTextEditor } from "../components/RichTextEditor";
 import { exportUnitPackage } from "../features/backup/backupService";
-import { saveAsset } from "../features/assets/assetService";
+import { createVideoThumbnail, externalVideoThumbnail, saveAsset, saveBinaryAsset } from "../features/assets/assetService";
+import { allowedContentBlocks, contentBlockNumber } from "../features/curriculum/curriculumRules";
+import { stageObjectivesIntro, unitObjectivesIntro } from "../features/units/templateCopy";
+import { uuid } from "../utils/ids";
 import QRCode from "qrcode";
 import { useUiStore } from "../store/uiStore";
 import stageObjectives from "../data/curriculum/stage-objectives.json";
@@ -129,8 +132,9 @@ function CurriculumPanel({ unit }: { unit: Unit }) {
   const selectedRelationships = (relationships as CurriculumRelationship[]).filter((item) => unit.selectedCriterionIds.includes(item.criterionId));
   const objectiveIds = [...new Set(selectedRelationships.map((item) => item.specificCompetenceId).filter(Boolean))];
   const descriptorIds = [...new Set(selectedRelationships.flatMap((item) => item.descriptorIds))];
+  const enabledBlocks = allowedContentBlocks(unit.selectedCriterionIds);
   return <section>
-    <PanelHeader eyebrow="Decreto 156/2022 · anexo II" title="Selección curricular" text="Los vínculos criterio–objetivo–descriptor son normativos. Los contenidos permanecen como selección manual porque la norma los agrupa por bloque." />
+    <PanelHeader eyebrow="Decreto 156/2022 · anexo II" title="Selección curricular" text="Los criterios habilitan su bloque de contenidos. Al retirar el último criterio de un bloque, sus contenidos se desmarcan automáticamente." />
     <input className="search" placeholder="Buscar por código o texto…" value={query} onChange={(event) => setQuery(event.target.value)} />
     <div className="curriculum-layout">
       <div>
@@ -165,12 +169,16 @@ function CurriculumPanel({ unit }: { unit: Unit }) {
       <span><strong>{item.code})</strong>{item.legalText}</span>
     </label>)}</div>
     <h2>Contenidos</h2>
-    {(blocks as CurriculumItem[]).map((block) => <div key={block.id} className="content-block"><h3>{block.code} · {block.legalText}</h3>
+    {(blocks as CurriculumItem[]).map((block) => {
+      const blockNumber = contentBlockNumber(block.id);
+      const enabled = Boolean(blockNumber && enabledBlocks.has(blockNumber));
+      return <div key={block.id} className={`content-block${enabled ? "" : " content-block--disabled"}`}><h3>{block.code} · {block.legalText}</h3>
+      {!enabled && <p className="content-block-note">Selecciona al menos un criterio CE{blockNumber}.X para habilitar los contenidos de este bloque.</p>}
       {(contents as CurriculumItem[]).filter((item) => item.blockId === block.id).map((item) => <label key={item.id} className="check-card">
-        <input type="checkbox" checked={unit.selectedContentIds.includes(item.id)} onChange={() => updateUnit(unit.id, { selectedContentIds: toggle(unit.selectedContentIds, item.id) })} />
+        <input type="checkbox" disabled={!enabled} checked={unit.selectedContentIds.includes(item.id)} onChange={() => updateUnit(unit.id, { selectedContentIds: toggle(unit.selectedContentIds, item.id) })} />
         <span>{item.legalText}</span>
       </label>)}
-    </div>)}
+    </div>;})}
   </section>;
 }
 
@@ -250,12 +258,110 @@ function ActivityEditor({ unit, activity, index, siblings }: { unit: Unit; activ
       <label className="field"><span>Instrucciones</span><textarea value={activity.instructions} onChange={(event) => updateActivity(activity.id, { instructions: event.target.value })} /></label>
       <span className="field-label">Material para el alumnado</span>
       <RichTextEditor value={activity.content} onChange={(content) => updateActivity(activity.id, { content })} />
+      <ActivityMediaEditor unit={unit} activity={activity} />
       <AssociationPicker unit={unit} criterionIds={activity.criterionIds} contentIds={activity.contentIds} duaMeasures={activity.duaMeasures}
         onCriteria={(criterionIds) => updateActivity(activity.id, { criterionIds })}
         onContents={(contentIds) => updateActivity(activity.id, { contentIds })}
         onDua={(duaMeasures) => updateActivity(activity.id, { duaMeasures })} />
     </div>
   </details>;
+}
+
+function ActivityMediaEditor({ unit, activity }: { unit: Unit; activity: Activity }) {
+  const activityMedia = activity.media ?? [];
+  const [url, setUrl] = useState("");
+  const [title, setTitle] = useState("");
+  const patchMedia = (media: ActivityMedia[]) => updateActivity(activity.id, { media });
+  const addFiles = async (fileList: FileList | null) => {
+    if (!fileList?.length) return;
+    const additions: ActivityMedia[] = [];
+    for (const file of Array.from(fileList)) {
+      if (file.type.startsWith("image/")) {
+        const asset = await saveAsset(unit.id, file, file.name);
+        additions.push({ id: uuid(), kind: "image", title: file.name, assetId: asset.id, mimeType: asset.mimeType, alt: file.name, caption: "" });
+      } else if (file.type.startsWith("video/")) {
+        const asset = await saveBinaryAsset(unit.id, file, file.name);
+        let thumbnailAssetId: string | undefined;
+        try {
+          const thumbnail = await createVideoThumbnail(file);
+          thumbnailAssetId = (await saveAsset(unit.id, thumbnail, `Miniatura de ${file.name}`)).id;
+        } catch {
+          thumbnailAssetId = undefined;
+        }
+        additions.push({ id: uuid(), kind: "video", title: file.name, assetId: asset.id, thumbnailAssetId, mimeType: asset.mimeType, alt: `Miniatura de ${file.name}`, caption: "" });
+      } else {
+        const asset = await saveBinaryAsset(unit.id, file, file.name);
+        additions.push({ id: uuid(), kind: "file", title: file.name, assetId: asset.id, mimeType: asset.mimeType, alt: file.name, caption: "" });
+      }
+    }
+    await patchMedia([...activityMedia, ...additions]);
+  };
+  const addLink = async () => {
+    const cleanUrl = url.trim();
+    if (!cleanUrl) return;
+    const thumbnailUrl = externalVideoThumbnail(cleanUrl);
+    const kind: ActivityMedia["kind"] = thumbnailUrl || /youtube|youtu\.be|vimeo|\.mp4(?:$|\?)/i.test(cleanUrl) ? "video" : "link";
+    await patchMedia([...activityMedia, {
+      id: uuid(), kind, title: title.trim() || (kind === "video" ? "Vídeo" : "Enlace"),
+      url: cleanUrl, thumbnailUrl, alt: title.trim() || "Recurso enlazado", caption: ""
+    }]);
+    setUrl("");
+    setTitle("");
+  };
+  const updateMedia = (id: string, changes: Partial<ActivityMedia>) =>
+    patchMedia(activityMedia.map((item) => item.id === id ? { ...item, ...changes } : item));
+
+  return <section className="activity-media-editor">
+    <div className="activity-media-heading"><div><strong>Imágenes, vídeos y archivos</strong><small>Se ajustarán automáticamente al ancho útil del A4. Los vídeos se exportan como una tarjeta con miniatura.</small></div>
+      <label className="button media-file-button">Añadir archivos<input type="file" multiple accept="image/*,video/*,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.zip" onChange={(event) => addFiles(event.target.files)} /></label>
+    </div>
+    <div className="media-link-form">
+      <input aria-label="Título del recurso" placeholder="Título del vídeo o enlace" value={title} onChange={(event) => setTitle(event.target.value)} />
+      <input aria-label="URL del recurso" type="url" placeholder="https://…" value={url} onChange={(event) => setUrl(event.target.value)} />
+      <button className="button" type="button" onClick={addLink}>Añadir URL</button>
+    </div>
+    {activityMedia.length > 0 && <div className="activity-media-list">{activityMedia.map((media) =>
+      <article className="activity-media-item" key={media.id}>
+        <MediaPreview media={media} />
+        <div>
+          <input aria-label="Título del medio" value={media.title} onChange={(event) => updateMedia(media.id, { title: event.target.value })} />
+          {(media.kind === "image" || media.kind === "video") && <input aria-label="Texto alternativo" value={media.alt} placeholder="Texto alternativo" onChange={(event) => updateMedia(media.id, { alt: event.target.value })} />}
+          <input aria-label="Pie del medio" value={media.caption} placeholder="Pie o fuente (opcional)" onChange={(event) => updateMedia(media.id, { caption: event.target.value })} />
+        </div>
+        <button className="button button--danger" type="button" onClick={() => patchMedia(activityMedia.filter((item) => item.id !== media.id))}>Quitar</button>
+      </article>)}</div>}
+  </section>;
+}
+
+function useAssetUrl(assetId?: string) {
+  const asset = useLiveQuery(() => assetId ? db.assets.get(assetId) : undefined, [assetId]);
+  const [url, setUrl] = useState("");
+  useEffect(() => {
+    if (!asset) {
+      setUrl("");
+      return;
+    }
+    const next = URL.createObjectURL(asset.blob);
+    setUrl(next);
+    return () => URL.revokeObjectURL(next);
+  }, [asset]);
+  return { asset, url };
+}
+
+function MediaPreview({ media, printable = false }: { media: ActivityMedia; printable?: boolean }) {
+  const image = useAssetUrl(media.kind === "image" ? media.assetId : media.thumbnailAssetId);
+  const file = useLiveQuery(() => media.assetId ? db.assets.get(media.assetId) : undefined, [media.assetId]);
+  const thumbnail = image.url || media.thumbnailUrl;
+  if (media.kind === "image") {
+    return <figure className={`activity-media activity-media--image${printable ? " activity-media--print" : ""}`}><img src={thumbnail} alt={media.alt} /><figcaption>{media.caption || media.title}</figcaption></figure>;
+  }
+  if (media.kind === "video") {
+    return <figure className={`activity-media activity-media--video${printable ? " activity-media--print" : ""}`}>
+      <div className="video-thumbnail">{thumbnail ? <img src={thumbnail} alt={media.alt || `Miniatura de ${media.title}`} /> : <div className="video-placeholder" aria-hidden="true">VÍDEO</div>}<span className="play-mark" aria-hidden="true">▶</span></div>
+      <figcaption><strong>{media.title}</strong>{media.caption && <span>{media.caption}</span>}{media.url && <a href={media.url}>{media.url}</a>}</figcaption>
+    </figure>;
+  }
+  return <div className={`activity-media activity-media--file${printable ? " activity-media--print" : ""}`}><span aria-hidden="true">{media.kind === "link" ? "↗" : "DOC"}</span><div><strong>{media.title || file?.name}</strong>{media.caption && <small>{media.caption}</small>}{media.url && <a href={media.url}>{media.url}</a>}</div></div>;
 }
 
 function AssociationPicker({ unit, criterionIds, contentIds, duaMeasures, onCriteria, onContents, onDua }: {
@@ -404,8 +510,9 @@ function PrintDocument({ unit, sections, sessions, activities }: { unit: Unit; s
     {orderedSections.map((section, index) => section.visible && <article className="print-page content-page" key={section.id}>
       <header className="running-header">UD {unit.number} · {unit.title}</header>
       <h1>{index + 1}. {sectionTitles[section.key]}</h1>
-      {section.key === "stageObjectives" ? <LegalList ids={unit.selectedStageObjectiveIds} source={stageObjectives as CurriculumItem[]} /> :
-       section.key === "unitObjectives" || section.key === "keyCompetences" ? <CurriculumRelationsPrint unit={unit} /> :
+      {section.key === "stageObjectives" ? <><p className="section-lead">{stageObjectivesIntro}</p><LegalList ids={unit.selectedStageObjectiveIds} source={stageObjectives as CurriculumItem[]} /></> :
+       section.key === "unitObjectives" ? <><p className="section-lead">{unitObjectivesIntro}</p><CurriculumRelationsPrint unit={unit} /></> :
+       section.key === "keyCompetences" ? <CurriculumRelationsPrint unit={unit} /> :
        section.key === "contents" ? <ContentsPrint unit={unit} /> :
        section.key === "learningSituation" ? <SessionPrint sessions={sessions} activities={activities} /> :
        section.key === "assessmentAndDiversity" ? <AssessmentPrint unit={unit} sessions={sessions} activities={activities} /> :
@@ -443,24 +550,24 @@ function LegalList({ ids, source }: { ids: string[]; source: CurriculumItem[] })
 function CurriculumRelationsPrint({ unit }: { unit: Unit }) {
   const selectedCriteria = (criteria as CurriculumItem[]).filter((item) => unit.selectedCriterionIds.includes(item.id));
   const relationSource = relationships as CurriculumRelationship[];
-  return <div className="table-wrap print-table"><table><thead><tr><th>Criterio</th><th>Objetivo de materia</th><th>Descriptores</th><th>Competencias clave</th><th>Tipo de relación</th></tr></thead><tbody>
+  return <div className="table-wrap print-table"><table><thead><tr><th>Criterio</th><th>Objetivo de materia</th><th>Descriptores</th><th>Competencias clave</th></tr></thead><tbody>
     {selectedCriteria.map((criterion) => {
       const relation = relationSource.find((item) => item.criterionId === criterion.id);
       const competence = (competences as CurriculumItem[]).find((item) => item.id === relation?.specificCompetenceId);
       const descriptorItems = (descriptors as CurriculumItem[]).filter((item) => relation?.descriptorIds.includes(item.id));
       const keyCodes = [...new Set(descriptorItems.map((item) => item.code.match(/^[A-Z]+/)?.[0]).filter(Boolean))];
-      return <tr key={criterion.id}><td><strong>{criterion.code}</strong><small>{criterion.legalText}</small></td><td>{competence?.code ?? "—"}</td><td>{descriptorItems.map((item) => item.code).join(", ") || "—"}</td><td>{keyCodes.join(", ") || "—"}</td><td><span className="relation-badge normative">Normativa</span></td></tr>;
+      return <tr key={criterion.id}><td><strong>{criterion.code}</strong><small>{criterion.legalText}</small></td><td>{competence?.code ?? "—"}</td><td>{descriptorItems.map((item) => item.code).join(", ") || "—"}</td><td>{keyCodes.join(", ") || "—"}</td></tr>;
     })}
-    {!selectedCriteria.length && <tr><td colSpan={5}>Aún no hay criterios seleccionados.</td></tr>}
+    {!selectedCriteria.length && <tr><td colSpan={4}>Aún no hay criterios seleccionados.</td></tr>}
   </tbody></table></div>;
 }
 
 function ContentsPrint({ unit }: { unit: Unit }) {
-  return <div className="table-wrap print-table"><table><thead><tr><th>Bloque</th><th>Contenido seleccionado</th><th>Selección</th></tr></thead><tbody>
+  return <div className="table-wrap print-table"><table><thead><tr><th>Bloque</th><th>Contenido seleccionado</th></tr></thead><tbody>
     {(blocks as CurriculumItem[]).flatMap((block) => (contents as CurriculumItem[])
       .filter((item) => item.blockId === block.id && unit.selectedContentIds.includes(item.id))
-      .map((item) => <tr key={item.id}><td><strong>{block.code}</strong><small>{block.legalText}</small></td><td>{item.legalText}</td><td><span className="relation-badge manual">Manual</span></td></tr>))}
-    {!unit.selectedContentIds.length && <tr><td colSpan={3}>Aún no hay contenidos seleccionados.</td></tr>}
+      .map((item) => <tr key={item.id}><td><strong>{block.code}</strong><small>{block.legalText}</small></td><td>{item.legalText}</td></tr>))}
+    {!unit.selectedContentIds.length && <tr><td colSpan={2}>Aún no hay contenidos seleccionados.</td></tr>}
   </tbody></table></div>;
 }
 
@@ -479,6 +586,6 @@ function AssessmentPrint({ unit, sessions, activities }: { unit: Unit; sessions:
 function SessionPrint({ sessions, activities }: { sessions: Session[]; activities: Activity[] }) {
   return <div>{sessions.filter((session) => session.includeInExport).map((session) => <section className="print-session" key={session.id}><h2>Sesión {session.order + 1}. {session.title}</h2><p>{session.description}</p>
     <table className="session-summary"><thead><tr><th>Fase</th><th>Duración</th><th>Objetivo</th><th>Evidencia</th></tr></thead><tbody><tr><td>{session.phase}</td><td>{session.duration} min</td><td>{session.objective}</td><td>{session.evidence}</td></tr></tbody></table>
-    {activities.filter((activity) => activity.sessionId === session.id && activity.includeInExport).sort((a, b) => a.order - b.order).map((activity, index) => <article className="print-activity" key={activity.id}><h3>Actividad {index + 1}. {activity.title}</h3><p>{activity.description}</p><div className="purpose-box"><strong>Finalidad didáctica</strong>{activity.purpose}</div><div className="student-material" dangerouslySetInnerHTML={{ __html: activity.content }} /></article>)}
+    {activities.filter((activity) => activity.sessionId === session.id && activity.includeInExport).sort((a, b) => a.order - b.order).map((activity, index) => <article className="print-activity" key={activity.id}><h3>Actividad {index + 1}. {activity.title}</h3><p>{activity.description}</p><div className="purpose-box"><strong>Finalidad didáctica</strong>{activity.purpose}</div><div className="student-material" dangerouslySetInnerHTML={{ __html: activity.content }} />{(activity.media ?? []).map((media) => <MediaPreview key={media.id} media={media} printable />)}</article>)}
   </section>)}</div>;
 }

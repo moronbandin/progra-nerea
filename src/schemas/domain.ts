@@ -134,6 +134,18 @@ export const activitySchema = baseEntity.extend({
   assessmentInstrumentId: z.string().optional(),
   duaMeasures: z.array(z.string()).default([]),
   teacherNotes: z.string().default(""),
+  media: z.array(z.object({
+    id: z.string().uuid(),
+    kind: z.enum(["image", "video", "file", "link"]),
+    title: z.string().default(""),
+    assetId: z.string().uuid().optional(),
+    thumbnailAssetId: z.string().uuid().optional(),
+    thumbnailUrl: z.string().optional(),
+    url: z.string().optional(),
+    mimeType: z.string().optional(),
+    alt: z.string().default(""),
+    caption: z.string().default("")
+  })).default([]),
   includeInExport: z.boolean().default(true)
 });
 
@@ -142,6 +154,7 @@ export type Unit = z.infer<typeof unitSchema>;
 export type UnitSection = z.infer<typeof sectionSchema>;
 export type Session = z.infer<typeof sessionSchema>;
 export type Activity = z.infer<typeof activitySchema>;
+export type ActivityMedia = Activity["media"][number];
 
 export interface Asset {
   id: string;

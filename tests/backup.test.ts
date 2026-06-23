@@ -74,4 +74,47 @@ describe("copias de unidad", () => {
     expect(archive.file("preview.png")).not.toBeNull();
     expect(archive.folder("assets")).not.toBeNull();
   });
+
+  it("restaura los archivos vinculados a una actividad", async () => {
+    const activityId = "44444444-4444-4444-8444-444444444444";
+    const assetId = "55555555-5555-4555-8555-555555555555";
+    const zip = new JSZip();
+    zip.file("manifest.json", JSON.stringify({ format: "udpack", version: 1 }));
+    zip.file("unit.json", JSON.stringify({
+      unit: {
+        id: unitId, projectId, number: 1, title: "Unidad con medios", subtitle: "", evaluation: "1.ª evaluación",
+        startDate: "", endDate: "", plannedSessions: 1, sessionDuration: 50, thematicAxis: "", mainTexts: "",
+        finalProduct: "", color: "#8f4b3e", coverTreatment: "band", author: "Nerea", academicYear: "2026/2027",
+        status: "draft", selectedStageObjectiveIds: [], selectedCompetenceIds: [], selectedCriterionIds: [],
+        selectedContentIds: [], unitDiversityMeasures: [], backCoverSummary: "", qrUrl: "",
+        createdAt: timestamp, updatedAt: timestamp, schemaVersion: 1
+      },
+      sections: [],
+      sessions: [{
+        id: sessionId, unitId, order: 0, title: "Sesión", duration: 50, phase: "activación",
+        pedagogicalFunction: "", objective: "", description: "", groupings: [], methodologies: [], skills: [],
+        criterionIds: [], contentIds: [], resources: "", evidence: "", duaMeasures: [], teacherNotes: "",
+        collapsed: false, includeInExport: true, createdAt: timestamp, updatedAt: timestamp, schemaVersion: 1
+      }],
+      activities: [{
+        id: activityId, sessionId, order: 0, title: "Actividad", type: "digital", duration: 15,
+        purpose: "", description: "", instructions: "", content: "", grouping: "Individual", methodology: "",
+        cognitiveProcess: "comprender", didacticFunction: "adquisición", resources: "", evidence: "",
+        criterionIds: [], contentIds: [], duaMeasures: [], teacherNotes: "", includeInExport: true,
+        media: [{ id: "66666666-6666-4666-8666-666666666666", kind: "file", title: "Ficha", assetId, alt: "Ficha", caption: "" }],
+        createdAt: timestamp, updatedAt: timestamp, schemaVersion: 1
+      }],
+      assets: [{
+        id: assetId, unitId, name: "ficha.pdf", mimeType: "application/pdf", alt: "Ficha",
+        createdAt: timestamp, updatedAt: timestamp, schemaVersion: 1
+      }]
+    }));
+    zip.file(`assets/${assetId}-ficha.pdf`, new Uint8Array([37, 80, 68, 70]));
+    const importedId = await importUnitPackage(new File([await zip.generateAsync({ type: "uint8array" })], "medios.udpack"), projectId);
+    const importedSession = await db.sessions.where("unitId").equals(importedId).first();
+    const importedActivity = await db.activities.where("sessionId").equals(importedSession!.id).first();
+    const importedAsset = await db.assets.get(importedActivity!.media[0].assetId!);
+    expect(importedAsset?.name).toBe("ficha.pdf");
+    expect(importedActivity?.media[0].assetId).not.toBe(assetId);
+  });
 });

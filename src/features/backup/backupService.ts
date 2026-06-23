@@ -1,7 +1,46 @@
 import JSZip from "jszip";
 import { db } from "../../db/database";
-import { unitSchema, sectionSchema, sessionSchema, activitySchema, type Unit } from "../../schemas/domain";
+import { unitSchema, sectionSchema, sessionSchema, activitySchema, type Activity, type Asset, type Unit } from "../../schemas/domain";
 import { now, uuid } from "../../utils/ids";
+import { filterContentIdsByCriteria } from "../curriculum/curriculumRules";
+
+type AssetMetadata = Omit<Asset, "blob">;
+
+function remapActivityAssets(activity: Activity, assetMap: Map<string, string>): Activity {
+  return {
+    ...activity,
+    media: activity.media.map((media) => ({
+      ...media,
+      assetId: media.assetId ? assetMap.get(media.assetId) : undefined,
+      thumbnailAssetId: media.thumbnailAssetId ? assetMap.get(media.thumbnailAssetId) : undefined
+    }))
+  };
+}
+
+async function restoreAssets(
+  zip: JSZip,
+  metadata: AssetMetadata[],
+  unitId: string,
+  prefix = "assets/"
+): Promise<{ assets: Asset[]; map: Map<string, string> }> {
+  const map = new Map<string, string>();
+  const restored: Asset[] = [];
+  for (const source of metadata) {
+    const file = zip.file(`${prefix}${source.id}-${source.name}`);
+    if (!file) continue;
+    const id = uuid();
+    map.set(source.id, id);
+    restored.push({
+      ...source,
+      id,
+      unitId,
+      blob: await file.async("blob"),
+      createdAt: now(),
+      updatedAt: now()
+    });
+  }
+  return { assets: restored, map };
+}
 
 function download(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob);
@@ -63,7 +102,10 @@ export async function buildUnitPackage(unit: Unit): Promise<Uint8Array> {
   zip.file("manifest.json", JSON.stringify({
     format: "udpack", version: 1, exportedAt: now(), unitId: unit.id, title: unit.title
   }, null, 2));
-  zip.file("unit.json", JSON.stringify({ unit, sections, sessions, activities }, null, 2));
+  zip.file("unit.json", JSON.stringify({
+    unit, sections, sessions, activities,
+    assets: assets.map(({ blob: _blob, ...metadata }) => metadata)
+  }, null, 2));
   const assetFolder = zip.folder("assets");
   assets.forEach((asset) => assetFolder?.file(`${asset.id}-${asset.name}`, asset.blob));
   zip.file("preview.png", await createPreviewPng(unit));
@@ -75,13 +117,23 @@ export async function importUnitPackage(file: File, projectId: string): Promise<
   const manifest = JSON.parse(await zip.file("manifest.json")!.async("string")) as { format: string; version: number };
   if (manifest.format !== "udpack" || manifest.version !== 1) throw new Error("Paquete incompatible.");
   const payload = JSON.parse(await zip.file("unit.json")!.async("string")) as {
-    unit: unknown; sections: unknown[]; sessions: unknown[]; activities: unknown[];
+    unit: unknown; sections: unknown[]; sessions: unknown[]; activities: unknown[]; assets?: AssetMetadata[];
   };
   const sourceUnit = unitSchema.parse(payload.unit);
   const unitId = uuid();
   const timestamp = now();
   const sessionMap = new Map<string, string>();
-  const unit = { ...sourceUnit, id: unitId, projectId, title: `${sourceUnit.title} · importada`, createdAt: timestamp, updatedAt: timestamp };
+  const restored = await restoreAssets(zip, payload.assets ?? [], unitId);
+  const unit = {
+    ...sourceUnit,
+    id: unitId,
+    projectId,
+    title: `${sourceUnit.title} · importada`,
+    coverAssetId: sourceUnit.coverAssetId ? restored.map.get(sourceUnit.coverAssetId) : undefined,
+    selectedContentIds: filterContentIdsByCriteria(sourceUnit.selectedContentIds, sourceUnit.selectedCriterionIds),
+    createdAt: timestamp,
+    updatedAt: timestamp
+  };
   const sections = payload.sections.map((item) => ({ ...sectionSchema.parse(item), id: uuid(), unitId, createdAt: timestamp, updatedAt: timestamp }));
   const sessions = payload.sessions.map((item) => {
     const parsed = sessionSchema.parse(item);
@@ -91,13 +143,14 @@ export async function importUnitPackage(file: File, projectId: string): Promise<
   });
   const activities = payload.activities.map((item) => {
     const parsed = activitySchema.parse(item);
-    return { ...parsed, id: uuid(), sessionId: sessionMap.get(parsed.sessionId)!, createdAt: timestamp, updatedAt: timestamp };
+    return { ...remapActivityAssets(parsed, restored.map), id: uuid(), sessionId: sessionMap.get(parsed.sessionId)!, createdAt: timestamp, updatedAt: timestamp };
   });
-  await db.transaction("rw", db.units, db.unitSections, db.sessions, db.activities, async () => {
+  await db.transaction("rw", db.units, db.unitSections, db.sessions, db.activities, db.assets, async () => {
     await db.units.add(unit);
     await db.unitSections.bulkAdd(sections);
     await db.sessions.bulkAdd(sessions);
     await db.activities.bulkAdd(activities);
+    if (restored.assets.length) await db.assets.bulkAdd(restored.assets);
   });
   return unitId;
 }
@@ -113,7 +166,10 @@ export async function exportProjectPackage(projectId: string) {
     const sections = await db.unitSections.where("unitId").equals(unit.id).toArray();
     const sessions = await db.sessions.where("unitId").equals(unit.id).sortBy("order");
     const activities = (await Promise.all(sessions.map((session) => db.activities.where("sessionId").equals(session.id).sortBy("order")))).flat();
-    payload.push({ unit, sections, sessions, activities });
+    const assets = await db.assets.where("unitId").equals(unit.id).toArray();
+    payload.push({ unit, sections, sessions, activities, assets: assets.map(({ blob: _blob, ...metadata }) => metadata) });
+    const folder = zip.folder(`assets/${unit.id}`);
+    assets.forEach((asset) => folder?.file(`${asset.id}-${asset.name}`, asset.blob));
   }
   zip.file("project.json", JSON.stringify({ project, units: payload }, null, 2));
   download(await zip.generateAsync({ type: "blob" }), "programacion.udproject");
@@ -126,7 +182,7 @@ export async function importProjectPackage(file: File): Promise<string> {
   if (manifest.format !== "udproject" || manifest.version !== 1) throw new Error("Copia de proyecto incompatible.");
   const payload = JSON.parse(await zip.file("project.json")!.async("string")) as {
     project: { name: string; author: string; academicYear: string };
-    units: Array<{ unit: unknown; sections: unknown[]; sessions: unknown[]; activities: unknown[] }>;
+    units: Array<{ unit: unknown; sections: unknown[]; sessions: unknown[]; activities: unknown[]; assets?: AssetMetadata[] }>;
   };
   const timestamp = now();
   const projectId = uuid();
@@ -143,7 +199,16 @@ export async function importProjectPackage(file: File): Promise<string> {
     const sourceUnit = unitSchema.parse(entry.unit);
     const unitId = uuid();
     const sessionMap = new Map<string, string>();
-    const unit = { ...sourceUnit, id: unitId, projectId, createdAt: timestamp, updatedAt: timestamp };
+    const restored = await restoreAssets(zip, entry.assets ?? [], unitId, `assets/${sourceUnit.id}/`);
+    const unit = {
+      ...sourceUnit,
+      id: unitId,
+      projectId,
+      coverAssetId: sourceUnit.coverAssetId ? restored.map.get(sourceUnit.coverAssetId) : undefined,
+      selectedContentIds: filterContentIdsByCriteria(sourceUnit.selectedContentIds, sourceUnit.selectedCriterionIds),
+      createdAt: timestamp,
+      updatedAt: timestamp
+    };
     const unitSections = entry.sections.map((item) => ({ ...sectionSchema.parse(item), id: uuid(), unitId, createdAt: timestamp, updatedAt: timestamp }));
     const unitSessions = entry.sessions.map((item) => {
       const parsed = sessionSchema.parse(item);
@@ -153,13 +218,14 @@ export async function importProjectPackage(file: File): Promise<string> {
     });
     const unitActivities = entry.activities.map((item) => {
       const parsed = activitySchema.parse(item);
-      return { ...parsed, id: uuid(), sessionId: sessionMap.get(parsed.sessionId)!, createdAt: timestamp, updatedAt: timestamp };
+      return { ...remapActivityAssets(parsed, restored.map), id: uuid(), sessionId: sessionMap.get(parsed.sessionId)!, createdAt: timestamp, updatedAt: timestamp };
     });
-    await db.transaction("rw", db.units, db.unitSections, db.sessions, db.activities, async () => {
+    await db.transaction("rw", db.units, db.unitSections, db.sessions, db.activities, db.assets, async () => {
       await db.units.add(unit);
       await db.unitSections.bulkAdd(unitSections);
       await db.sessions.bulkAdd(unitSessions);
       await db.activities.bulkAdd(unitActivities);
+      if (restored.assets.length) await db.assets.bulkAdd(restored.assets);
     });
   }
   return projectId;
